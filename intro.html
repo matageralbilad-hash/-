@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+
+ايفون نت | مرحبًا بك
+
+</title>
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap"
+rel="stylesheet">
+
+<style>
+
+:root{
+
+--primary:#22f5d5;
+
+--secondary:#7560ff;
+
+--third:#46a8ff;
+
+--card:rgba(18,22,35,.88);
+
+--gradient:
+
+linear-gradient(
+135deg,
+#22f5d5,
+#46a8ff,
+#7560ff
+);
+
+}
+
+*{
+
+margin:0;
+
+padding:0;
+
+box-sizing:border-box;
+
+font-family:"Cairo",sans-serif;
+
+}
+
+body{
+
+background:
+
+linear-gradient(
+180deg,
+#060a12,
+#0d1424
+);
+
+color:white;
+
+padding:20px;
+
+min-height:100vh;
+
+}
+
+.container{
+
+width:100%;
+
+max-width:760px;
+
+margin:auto;
+
+}
+
+.hero{
+
+text-align:center;
+
+margin-bottom:25px;
+
+}
+
+.hero h1{
+
+font-size:34px;
+
+margin-bottom:10px;
+
+}
+
+.hero p{
+
+color:#a8b3c7;
+
+line-height:1.8;
+
+}
+
+.card{
+
+background:var(--card);
+
+padding:24px;
+
+border-radius:22px;
+
+margin-bottom:18px;
+
+backdrop-filter:blur(15px);
+
+box-shadow:
+
+0 0 25px rgba(0,0,0,.35);
+
+}
+
+.title{
+
+font-size:22px;
+
+margin-bottom:18px;
+
+color:var(--primary);
+
+}
+
+.about{
+
+line-height:2;
+
+color:#d8dce5;
+
+}
+
+.features{
+
+display:grid;
+
+gap:12px;
+
+}
+
+.feature{
+
+background:#172236;
+
+padding:14px;
+
+border-radius:14px;
+
+}
+
+.startBtn{
+
+width:100%;
+
+padding:18px;
+
+border:none;
+
+border-radius:18px;
+
+cursor:pointer;
+
+font-size:18px;
+
+font-weight:700;
+
+margin-top:25px;
+
+background:var(--gradient);
+
+color:white;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="hero">
+
+<h1>
+
+ايفون نت
+
+</h1>
+
+<p>
+
+سرعة تثق بها واتصال يدوم
+
+</p>
+
+</div>
+
+<div class="card">
+
+<div class="title">
+
+من نحن
+
+</div>
+
+<div class="about">
+
+مرحبًا بكم في ايفون نت، شبكتكم الموثوقة لخدمات الإنترنت والاتصالات.
+
+نقدم حلول اتصال عصرية بباقات متنوعة تناسب الجميع، مع التركيز على الجودة والثبات والسرعة لضمان أفضل تجربة استخدام.
+
+في ايفون نت نؤمن أن الإنترنت ليس مجرد خدمة، بل تجربة اتصال مستمرة تربطك بالعالم.
+
+ايفون نت... سرعة تثق بها واتصال يدوم.
+
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="title">
+
+مميزاتنا
+
+</div>
+
+<div class="features">
+
+<div class="feature">
+✓ خدمة متواصلة 24 ساعة
+</div>
+
+<div class="feature">
+✓ إنترنت قوي وثابت
+</div>
+
+<div class="feature">
+✓ باقات متنوعة تناسب الجميع
+</div>
+
+<div class="feature">
+✓ سرعة عالية وأداء مستقر
+</div>
+
+<div class="feature">
+✓ دعم فني مستمر
+</div>
+
+<div class="feature">
+✓ سهولة الاشتراك
+</div>
+
+<div class="feature">
+✓ أسعار مناسبة
+</div>
+
+</div>
+
+<button
+class="startBtn"
+onclick="goHome()">
+
+ابدأ الآن
+
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+if(
+
+!localStorage.getItem(
+
+"ifon_session"
+
+)
+
+){
+
+location.href=
+
+"index.html";
+
+}
+
+function goHome(){
+
+location.href=
+
+"home.html";
+
+}
+
+</script>
+
+</body>
+
+</html>

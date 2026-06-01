@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ايفون نت | تسجيل الدخول</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--bg:#060a12;
+--card:rgba(18,22,35,.88);
+--primary:#22f5d5;
+--secondary:#7560ff;
+--gradient:linear-gradient(135deg,#22f5d5,#46a8ff,#7560ff);
+--muted:#9ca3af;
+--radius:24px;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Cairo",sans-serif;
+}
+
+body{
+background:linear-gradient(180deg,#060a12,#0d1424);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:18px;
+color:white;
+}
+
+.container{
+width:100%;
+max-width:430px;
+}
+
+.authCard{
+background:var(--card);
+backdrop-filter:blur(18px);
+border-radius:var(--radius);
+overflow:hidden;
+box-shadow:0 0 40px rgba(0,0,0,.45);
+}
+
+.topBar{
+height:8px;
+background:var(--gradient);
+}
+
+.content{
+padding:28px;
+}
+
+.logo{
+width:100px;
+height:100px;
+border-radius:50%;
+display:block;
+margin:auto;
+}
+
+.appName{
+text-align:center;
+font-size:30px;
+font-weight:800;
+margin-top:16px;
+}
+
+.desc{
+text-align:center;
+color:var(--muted);
+margin-bottom:20px;
+}
+
+.inputBox{
+margin-bottom:12px;
+}
+
+.inputBox input{
+width:100%;
+padding:14px;
+border:none;
+outline:none;
+border-radius:12px;
+background:#182235;
+color:white;
+}
+
+.mainBtn{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+background:var(--gradient);
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+.switchBtn{
+text-align:center;
+margin-top:15px;
+color:var(--primary);
+cursor:pointer;
+}
+
+.hidden{display:none;}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="authCard">
+
+<div class="topBar"></div>
+
+<div class="content">
+
+<img src="ifon.jpeg" class="logo">
+
+<h1 class="appName">ايفون نت</h1>
+
+<p class="desc">شبكتك الذكية للإنترنت</p>
+
+<!-- LOGIN -->
+<div id="loginSection">
+
+<div class="inputBox">
+<input id="loginUser" placeholder="اسم المستخدم أو الهاتف">
+</div>
+
+<div class="inputBox">
+<input id="loginPass" type="password" placeholder="كلمة المرور">
+</div>
+
+<button class="mainBtn" onclick="login()">تسجيل الدخول</button>
+
+<div class="switchBtn" onclick="toggle()">ليس لديك حساب؟ إنشاء حساب</div>
+
+</div>
+
+<!-- REGISTER -->
+<div id="registerSection" class="hidden">
+
+<div class="inputBox">
+<input id="name" placeholder="الاسم">
+</div>
+
+<div class="inputBox">
+<input id="phone" placeholder="الهاتف">
+</div>
+
+<div class="inputBox">
+<input id="password" type="password" placeholder="كلمة المرور">
+</div>
+
+<button class="mainBtn" onclick="register()">إنشاء حساب</button>
+
+<div class="switchBtn" onclick="toggle()">لدي حساب</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+
+// Firebase Config
+const firebaseConfig = {
+apiKey: "AIzaSyAwe6GCjWD6JgoU2_CVsUL5Uonat3JRenk",
+authDomain: "ifon-net.firebaseapp.com",
+databaseURL: "https://ifon-net-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "ifon-net",
+storageBucket: "ifon-net.appspot.com",
+messagingSenderId: "447913160966",
+appId: "1:447913160966:web:6bcece8ed143c1710e2e87"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+
+// TOGGLE
+function toggle(){
+document.getElementById("loginSection").classList.toggle("hidden");
+document.getElementById("registerSection").classList.toggle("hidden");
+}
+
+
+// REGISTER (FIXED)
+function register(){
+
+const name = document.getElementById("name").value.trim();
+const phone = document.getElementById("phone").value.trim();
+const password = document.getElementById("password").value.trim();
+
+if(!name || !phone || !password){
+alert("أكمل البيانات");
+return;
+}
+
+const id = Date.now();
+
+db.ref("users/" + id).set({
+id,
+name,
+phone,
+password,
+plan:"free",
+createdAt:new Date().toISOString()
+}).then(()=>{
+
+localStorage.setItem("ifon_session","active");
+localStorage.setItem("ifon_uid",id);
+
+location.href="intro.html";
+
+}).catch(err=>{
+alert("خطأ: " + err.message);
+});
+
+}
+
+
+// LOGIN (FIXED)
+function login(){
+
+const userInput = document.getElementById("loginUser").value.trim();
+const password = document.getElementById("loginPass").value.trim();
+
+db.ref("users").once("value", snap => {
+
+let found = null;
+
+snap.forEach(child => {
+
+const u = child.val();
+
+if(
+(u.name === userInput || u.phone === userInput)
+&& u.password === password
+){
+found = u;
+}
+
+});
+
+if(found){
+
+localStorage.setItem("ifon_session","active");
+localStorage.setItem("ifon_uid",found.id);
+
+location.href="home.html";
+
+}else{
+alert("بيانات غير صحيحة");
+}
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
