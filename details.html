@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تفاصيل المحتوى | ايفون نت</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;800&display=swap" rel="stylesheet">
 
 <style>
 body{
@@ -17,18 +17,20 @@ color:white;
 
 .container{
 padding:15px;
+max-width:800px;
+margin:auto;
 }
 
 .videoBox{
 width:100%;
 aspect-ratio:16/9;
+background:black;
 border-radius:18px;
 overflow:hidden;
-background:#000;
-box-shadow:0 10px 30px rgba(0,0,0,0.5);
+position:relative;
 }
 
-.videoBox iframe{
+iframe{
 width:100%;
 height:100%;
 border:none;
@@ -53,44 +55,41 @@ margin-top:10px;
 line-height:1.8;
 }
 
-.btn{
-margin-top:15px;
-padding:12px;
-border:none;
-border-radius:12px;
-width:100%;
+.badge{
+display:inline-block;
+background:#ffcc00;
+color:black;
+padding:4px 10px;
+border-radius:8px;
+font-size:12px;
 font-weight:bold;
-cursor:pointer;
-background:linear-gradient(135deg,#18e0d0,#6b6cff);
-color:white;
 }
 
-.lock{
-position:relative;
-}
-
-.blur{
+.lockScreen{
 position:absolute;
 top:0;
 left:0;
 width:100%;
 height:100%;
-backdrop-filter:blur(10px);
+backdrop-filter:blur(12px);
+background:rgba(0,0,0,0.4);
 display:flex;
-justify-content:center;
 align-items:center;
+justify-content:center;
 flex-direction:column;
 gap:10px;
-border-radius:18px;
+z-index:10;
 }
 
-.badge{
-background:#ffcc00;
-color:#000;
-padding:5px 10px;
-border-radius:8px;
-font-size:12px;
+.btn{
+padding:12px;
+border:none;
+border-radius:12px;
+background:linear-gradient(135deg,#18e0d0,#6b6cff);
+color:white;
 font-weight:bold;
+cursor:pointer;
+width:80%;
 }
 </style>
 </head>
@@ -98,9 +97,7 @@ font-weight:bold;
 <body>
 
 <div class="container">
-
 <div id="content"></div>
-
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -117,82 +114,90 @@ projectId: "ifon-net"
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-/* GET ID */
 const id = new URLSearchParams(location.search).get("id");
-
-/* USER */
 const uid = localStorage.getItem("ifon_uid");
 
-/* LOAD USER + CONTENT */
+let videoStarted = false;
+let timer = null;
+
 async function load(){
 
 let userPlan = "free";
 
-/* user plan */
 if(uid){
-const usnap = await db.ref("users/"+uid).once("value");
-const user = usnap.val();
+const snap = await db.ref("users/"+uid).once("value");
+const user = snap.val();
 if(user) userPlan = user.plan || "free";
 }
 
-/* content */
 db.ref("content/"+id).once("value", snap=>{
-const data = snap.val();
 
+const data = snap.val();
 if(!data){
 document.getElementById("content").innerHTML = "لا يوجد محتوى";
 return;
 }
 
-/* views +1 */
+/* زيادة مشاهدات */
 db.ref("content/"+id+"/views").transaction(v => (v||0)+1);
 
-/* premium lock */
-let locked = false;
+/* تحديد إذا مدفوع */
+const isPremium = data.publish === "premium";
+const blocked = isPremium && userPlan !== "premium";
 
-if(data.publish === "premium" && userPlan !== "premium"){
-locked = true;
-}
-
-/* render */
+/* واجهة الفيديو */
 document.getElementById("content").innerHTML = `
 
 <div class="videoBox">
-<iframe src="${data.video || ''}" allowfullscreen></iframe>
+<iframe id="videoFrame" src="${data.video || ''}" allowfullscreen></iframe>
+
+${blocked ? `
+<div class="lockScreen">
+<div class="badge">🔒 محتوى مدفوع</div>
+<button class="btn" onclick="openSubscribe()">
+اشترك الآن
+</button>
+</div>
+` : ``}
+
 </div>
 
 <div class="card">
-<div class="title">${data.title || ""}</div>
-<div class="desc">${data.desc || ""}</div>
+<div class="title">${data.title}</div>
+<div class="desc">${data.desc}</div>
 
-<div style="margin-top:10px;color:#9ca3af;font-size:13px">
-👁 المشاهدات: ${data.views || 0}
+<div style="margin-top:10px;font-size:13px;color:#9ca3af">
+👁 ${data.views || 0} مشاهدة
 </div>
 </div>
-
-${
-locked ? `
-<div class="card lock">
-<div class="blur">
-<div class="badge">محتوى مدفوع</div>
-<button class="btn" onclick="openWhatsApp()">
-اشترك الآن عبر واتساب
-</button>
-</div>
-</div>
-` : ""
-}
 
 `;
 
-});
+/* تشغيل 30 ثانية فقط للمحتوى المدفوع */
+if(blocked){
+start30SecLimit();
 }
 
-function openWhatsApp(){
-window.open(
-"https://wa.me/967771746373?text=اريد%20اشتراك%20ايفون%20نت",
-"_blank"
-);
+});
+
+}
+
+/* ⛔ تشغيل 30 ثانية */
+function start30SecLimit(){
+const frame = document.getElementById("videoFrame");
+
+if(!frame) return;
+
+timer = setTimeout(()=>{
+frame.src = "";
+openSubscribe();
+}, 30000);
+}
+
+/* صفحة الاشتراك */
+function openSubscribe(){
+window.location.href =
+"https://wa.me/967771746373?text=اريد%20اشتراك%20ايفون%20نت";
 }
 
 load();
