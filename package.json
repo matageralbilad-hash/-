@@ -1,0 +1,7 @@
+{
+  "name": "ifon-net",
+  "version": "1.0.0",
+  "dependencies": {
+    "imagekit": "^5.2.0"
+  }
+}
