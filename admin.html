@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>لوحة تحكم ايفون نت</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--bg:#07111f;
+--card:#0d1b2d;
+--primary:#18e0d0;
+--secondary:#6b6cff;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Cairo;
+}
+
+body{
+background:linear-gradient(180deg,#07111f,#0f1b30);
+color:white;
+padding:20px;
+}
+
+.box{
+background:var(--card);
+padding:20px;
+border-radius:20px;
+margin-bottom:20px;
+}
+
+input,select,textarea{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:12px;
+border:none;
+background:#13243d;
+color:white;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:12px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+background:linear-gradient(135deg,#18e0d0,#6b6cff);
+font-weight:bold;
+}
+
+.user{
+padding:10px;
+background:#13243d;
+margin-top:10px;
+border-radius:10px;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h2>لوحة تحكم ايفون نت</h2>
+
+<!-- USERS -->
+<div class="box">
+<h3>المستخدمين</h3>
+
+<input id="searchUser" placeholder="بحث">
+<button onclick="searchUsers()">بحث</button>
+
+<div id="usersList"></div>
+
+<input id="selectedUser" readonly placeholder="المستخدم">
+
+<select id="plan">
+<option value="free">مجاني</option>
+<option value="premium">مدفوع</option>
+</select>
+
+<select id="days">
+<option value="1">يوم</option>
+<option value="7">أسبوع</option>
+<option value="30">شهر</option>
+<option value="365">سنة</option>
+</select>
+
+<button onclick="savePlan()">حفظ الاشتراك</button>
+</div>
+
+<!-- CONTENT -->
+<div class="box">
+<h3>رفع محتوى</h3>
+
+<select id="type">
+<option value="series">مسلسلات</option>
+<option value="movies">أفلام</option>
+<option value="matches">مباريات</option>
+<option value="kids">أطفال</option>
+</select>
+
+<input id="title" placeholder="العنوان">
+<textarea id="desc" placeholder="الوصف"></textarea>
+
+<input type="file" id="imageFile" accept="image/*">
+<button onclick="uploadImage()">رفع الصورة</button>
+
+<input type="file" id="videoFile" accept="video/*">
+<button onclick="uploadVideo()">رفع الفيديو</button>
+
+<select id="publish">
+<option value="free">مجاني</option>
+<option value="premium">مدفوع</option>
+<option value="all">الكل</option>
+</select>
+
+<button onclick="publishContent()">نشر</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+apiKey: "YOUR_API_KEY",
+authDomain: "ifon-net.firebaseapp.com",
+databaseURL: "https://ifon-net-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "ifon-net"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let currentUser = null;
+let imageURL = "";
+let videoURL = "";
+
+/* USERS */
+function searchUsers(){
+let q = document.getElementById("searchUser").value.toLowerCase();
+
+db.ref("users").once("value",snap=>{
+let html="";
+
+snap.forEach(c=>{
+let u=c.val();
+
+if(u.name && u.name.toLowerCase().includes(q)){
+html += `
+<div class="user" onclick="pickUser('${u.id}')">
+${u.name} - ${u.phone}
+</div>`;
+}
+});
+
+document.getElementById("usersList").innerHTML = html;
+});
+}
+
+function pickUser(id){
+currentUser = id;
+document.getElementById("selectedUser").value = id;
+}
+
+/* PLAN */
+function savePlan(){
+if(!currentUser) return alert("اختر مستخدم");
+
+let days = parseInt(document.getElementById("days").value);
+let date = new Date();
+date.setDate(date.getDate() + days);
+
+db.ref("users/"+currentUser).update({
+plan: document.getElementById("plan").value,
+expireAt: date.toISOString()
+});
+
+alert("تم تحديث الاشتراك");
+}
+
+/* IMAGE UPLOAD */
+async function uploadImage(){
+const file = document.getElementById("imageFile").files[0];
+if(!file) return alert("اختر صورة");
+
+const form = new FormData();
+form.append("file", file);
+form.append("fileName", file.name);
+
+const res = await fetch("/api/imagekit-upload", {
+method:"POST",
+body: form
+});
+
+const data = await res.json();
+imageURL = data.url;
+
+alert("تم رفع الصورة");
+}
+
+/* VIDEO UPLOAD (FIXED FLOW) */
+async function uploadVideo(){
+const file = document.getElementById("videoFile").files[0];
+if(!file) return alert("اختر فيديو");
+
+/* create video */
+const create = await fetch("/api/bunny-upload", {
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body: JSON.stringify({ title: "ifon video" })
+});
+
+const json = await create.json();
+const videoId = json.videoId;
+
+/* upload file */
+await fetch(`/api/bunny-upload-file?videoId=${videoId}`, {
+method:"PUT",
+body: file
+});
+
+videoURL = `https://video.bunnycdn.com/play/${videoId}`;
+
+alert("تم رفع الفيديو");
+}
+
+/* PUBLISH CONTENT */
+function publishContent(){
+
+if(!title.value) return alert("اكتب العنوان");
+
+const id = Date.now().toString();
+
+db.ref("content/"+id).set({
+id,
+type: type.value,
+title: title.value,
+desc: desc.value,
+image: imageURL,
+video: videoURL,
+publish: publish.value,
+createdAt: new Date().toISOString()
+});
+
+alert("تم النشر بنجاح");
+
+title.value = "";
+desc.value = "";
+imageURL = "";
+videoURL = "";
+}
+</script>
+
+</body>
+</html>

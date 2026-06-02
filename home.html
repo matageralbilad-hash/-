@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>ايفون نت | الرئيسية</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--bg:#07111f;
+--card:#0d1b2d;
+--primary:#18e0d0;
+--secondary:#4ca8ff;
+--text:#ffffff;
+--muted:#b4bfd1;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Cairo,sans-serif;
+}
+
+body{
+background:linear-gradient(180deg,#07111f,#0d1728);
+color:white;
+padding-bottom:120px;
+overflow-x:hidden;
+}
+
+.header{
+padding:20px;
+position:sticky;
+top:0;
+background:#07111f;
+z-index:999;
+}
+
+.navbar{
+display:flex;
+justify-content:center;
+gap:50px;
+margin-bottom:20px;
+}
+
+.navbar a{
+color:white;
+text-decoration:none;
+font-size:18px;
+font-weight:800;
+}
+
+.searchArea{
+width:95%;
+margin:auto;
+}
+
+.searchArea input{
+width:100%;
+padding:16px;
+border:none;
+outline:none;
+border-radius:18px;
+background:#000;
+color:white;
+font-size:15px;
+}
+
+.info{
+width:95%;
+margin:25px auto;
+padding:22px;
+background:var(--card);
+border-radius:24px;
+}
+
+.info h2{
+font-size:30px;
+margin-bottom:10px;
+color:var(--primary);
+}
+
+.info p{
+line-height:1.9;
+color:var(--muted);
+}
+
+.category{
+margin-top:55px;
+}
+
+.categoryBanner{
+width:94%;
+height:240px;
+margin:auto;
+border-radius:28px;
+overflow:hidden;
+position:relative;
+box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+
+.categoryBanner img{
+width:100%;
+height:100%;
+object-fit:cover;
+filter:brightness(.55);
+}
+
+.overlay{
+position:absolute;
+bottom:20px;
+right:25px;
+left:25px;
+z-index:2;
+}
+
+.overlay h2{
+font-size:34px;
+font-weight:800;
+margin-bottom:10px;
+}
+
+.overlay p{
+font-size:14px;
+}
+
+.contentSlider{
+width:94%;
+margin:15px auto 25px;
+padding:18px;
+background:var(--card);
+border-radius:28px;
+display:flex;
+gap:18px;
+overflow-x:auto;
+scrollbar-width:none;
+}
+
+.contentSlider::-webkit-scrollbar{
+display:none;
+}
+
+.item{
+min-width:180px;
+cursor:pointer;
+}
+
+.item img{
+width:180px;
+height:250px;
+border-radius:18px;
+object-fit:cover;
+}
+
+.item h4{
+margin-top:10px;
+text-align:center;
+font-size:15px;
+}
+
+.empty{
+width:100%;
+padding:30px;
+text-align:center;
+color:#a7b3c8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="navbar">
+<a href="home.html">الرئيسية</a>
+<a href="contact.html">اتصل بنا</a>
+</div>
+
+<div class="searchArea">
+<input id="searchInput"
+placeholder="ابحث عن خدمة أو قسم"
+oninput="firebaseSearch()">
+</div>
+
+</header>
+
+<div class="info">
+
+<h2>ايفون نت</h2>
+
+<p>
+شبكة السرعة والأفخم في سيئون، وهذا التطبيق مثال على خدمتنا القوية وسهولة الوصول للمحتوى بسرعة وثبات.
+</p>
+
+</div>
+
+<section class="category">
+
+<div class="categoryBanner">
+<img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba">
+
+<div class="overlay">
+<h2>المسلسلات</h2>
+<p>أحدث المسلسلات والمحتوى الحصري</p>
+</div>
+
+</div>
+
+<div class="contentSlider" id="seriesContainer"></div>
+
+</section>
+
+<section class="category">
+
+<div class="categoryBanner">
+<img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018">
+
+<div class="overlay">
+<h2>المباريات</h2>
+<p>ميسي ورونالدو وأقوى المواجهات</p>
+</div>
+
+</div>
+
+<div class="contentSlider" id="matchesContainer"></div>
+
+</section>
+
+<section class="category">
+
+<div class="categoryBanner">
+<img src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1">
+
+<div class="overlay">
+<h2>الأفلام</h2>
+<p>أفلام متنوعة وحديثة</p>
+</div>
+
+</div>
+
+<div class="contentSlider" id="moviesContainer"></div>
+
+</section>
+
+<section class="category">
+
+<div class="categoryBanner">
+<img src="https://images.unsplash.com/photo-1516627145497-ae6968895b74">
+
+<div class="overlay">
+<h2>الأطفال والكرتون</h2>
+<p>محتوى ممتع للأطفال</p>
+</div>
+
+</div>
+
+<div class="contentSlider" id="kidsContainer"></div>
+
+</section>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+
+if(!localStorage.getItem("ifon_session")){
+location.href="index.html";
+}
+
+const firebaseConfig = {
+
+apiKey:"YOUR_API_KEY",
+authDomain:"ifon-net.firebaseapp.com",
+databaseURL:"https://ifon-net-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"ifon-net"
+
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.database();
+
+let CONTENT = [];
+let USER_PLAN = "free";
+
+async function loadUser(){
+
+const uid = localStorage.getItem("ifon_uid");
+
+if(!uid) return;
+
+const snap = await db.ref("users/"+uid).once("value");
+
+const user = snap.val();
+
+if(user){
+
+USER_PLAN = user.plan || "free";
+
+}
+
+}
+
+function allowed(item){
+
+if(!item.publish) return true;
+
+if(item.publish==="all") return true;
+
+if(item.publish==="free") return true;
+
+if(
+item.publish==="premium"
+&& USER_PLAN==="premium"
+){
+return true;
+}
+
+return false;
+
+}
+
+function renderSection(type,id){
+
+const el = document.getElementById(id);
+
+const items = CONTENT.filter(
+x => x.type===type && allowed(x)
+);
+
+el.innerHTML = items.length ?
+
+items.map(i=>`
+
+<div class="item"
+onclick="openItem('${i.id}')">
+
+<img src="${i.image || ''}">
+
+<h4>${i.title}</h4>
+
+</div>
+
+`).join("")
+
+:
+
+`<div class="empty">لا توجد محتويات حالياً</div>`;
+
+}
+
+function renderAll(){
+
+renderSection("series","seriesContainer");
+
+renderSection("matches","matchesContainer");
+
+renderSection("movies","moviesContainer");
+
+renderSection("kids","kidsContainer");
+
+}
+
+function firebaseSearch(){
+
+const q =
+document.getElementById(
+"searchInput"
+).value.toLowerCase();
+
+if(!q){
+
+renderAll();
+
+return;
+
+}
+
+["series","movies","matches","kids"]
+
+.forEach(type=>{
+
+const el =
+document.getElementById(
+type+"Container"
+);
+
+const items =
+CONTENT.filter(i =>
+
+i.type===type &&
+
+allowed(i) &&
+
+i.title?.toLowerCase()
+
+.includes(q)
+
+);
+
+el.innerHTML = items.length ?
+
+items.map(i=>`
+
+<div class="item"
+onclick="openItem('${i.id}')">
+
+<img src="${i.image || ''}">
+
+<h4>${i.title}</h4>
+
+</div>
+
+`).join("")
+
+:
+
+`<div class="empty">لا يوجد نتائج</div>`;
+
+});
+
+}
+
+function openItem(id){
+
+location.href=
+"details.html?id="+id;
+
+}
+
+async function init(){
+
+await loadUser();
+
+db.ref("content")
+
+.on("value",snap=>{
+
+CONTENT=[];
+
+snap.forEach(c=>{
+
+CONTENT.push({
+
+id:c.key,
+
+...c.val()
+
+});
+
+});
+
+renderAll();
+
+});
+
+}
+
+init();
+
+</script>
+
+</body>
+
+</html>

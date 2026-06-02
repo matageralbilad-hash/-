@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>
+
+ايفون نت | اتصل بنا
+
+</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap"
+rel="stylesheet">
+
+<style>
+
+:root{
+
+--bg:#07111f;
+
+--card:#0d1b2d;
+
+--primary:#18e0d0;
+
+--secondary:#4ca8ff;
+
+--text:#ffffff;
+
+--muted:#b4bfd1;
+
+}
+
+*{
+
+margin:0;
+
+padding:0;
+
+box-sizing:border-box;
+
+font-family:Cairo,sans-serif;
+
+}
+
+body{
+
+background:
+
+linear-gradient(
+180deg,
+#07111f,
+#0d1728
+);
+
+color:white;
+
+padding-bottom:120px;
+
+}
+
+/* NAV */
+
+.header{
+
+padding:20px;
+
+position:sticky;
+
+top:0;
+
+background:#07111f;
+
+z-index:999;
+
+}
+
+.navbar{
+
+display:flex;
+
+justify-content:center;
+
+gap:50px;
+
+margin-bottom:15px;
+
+}
+
+.navbar a{
+
+text-decoration:none;
+
+color:white;
+
+font-size:18px;
+
+font-weight:800;
+
+}
+
+.title{
+
+text-align:center;
+
+font-size:34px;
+
+font-weight:800;
+
+margin-top:20px;
+
+}
+
+/* CARD */
+
+.box{
+
+width:94%;
+
+margin:25px auto;
+
+padding:24px;
+
+background:var(--card);
+
+border-radius:24px;
+
+}
+
+.inputBox{
+
+margin-bottom:15px;
+
+}
+
+.inputBox input,
+.inputBox textarea{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+
+outline:none;
+
+border-radius:16px;
+
+background:#101f36;
+
+color:white;
+
+font-size:15px;
+
+}
+
+textarea{
+
+resize:none;
+
+height:140px;
+
+}
+
+.sendBtn{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+
+border-radius:18px;
+
+background:
+
+linear-gradient(
+135deg,
+#18e0d0,
+#4ca8ff
+);
+
+color:white;
+
+font-size:16px;
+
+font-weight:800;
+
+cursor:pointer;
+
+}
+
+/* FAQ */
+
+.faqTitle{
+
+font-size:28px;
+
+font-weight:800;
+
+margin-bottom:20px;
+
+}
+
+.faqItem{
+
+background:#101f36;
+
+margin-bottom:12px;
+
+border-radius:16px;
+
+overflow:hidden;
+
+}
+
+.question{
+
+padding:18px;
+
+cursor:pointer;
+
+font-weight:700;
+
+}
+
+.answer{
+
+display:none;
+
+padding:18px;
+
+color:var(--muted);
+
+line-height:1.8;
+
+}
+
+.show{
+
+display:block;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="navbar">
+
+<a href="home.html">
+
+الرئيسية
+
+</a>
+
+<a href="contact.html">
+
+اتصل بنا
+
+</a>
+
+</div>
+
+</header>
+
+<h1 class="title">
+
+تواصل معنا
+
+</h1>
+
+<div class="box">
+
+<div class="inputBox">
+
+<input
+id="name"
+placeholder="الاسم">
+
+</div>
+
+<div class="inputBox">
+
+<input
+id="email"
+placeholder="البريد الإلكتروني">
+
+</div>
+
+<div class="inputBox">
+
+<textarea
+id="message"
+placeholder="اكتب استفسارك"></textarea>
+
+</div>
+
+<button
+class="sendBtn"
+onclick="sendMessage()">
+
+إرسال الاستفسار
+
+</button>
+
+</div>
+
+<div class="box">
+
+<h2 class="faqTitle">
+
+الأسئلة الشائعة
+
+</h2>
+
+<div class="faqItem">
+
+<div class="question"
+onclick="toggleFAQ(this)">
+
+كيف أشترك في الخدمة؟
+
+</div>
+
+<div class="answer">
+
+يمكنك الاشتراك عبر إنشاء حساب ثم اختيار الباقة المناسبة.
+
+</div>
+
+</div>
+
+<div class="faqItem">
+
+<div class="question"
+onclick="toggleFAQ(this)">
+
+هل الدعم متوفر 24 ساعة؟
+
+</div>
+
+<div class="answer">
+
+نعم، الدعم الفني متواصل على مدار الساعة.
+
+</div>
+
+</div>
+
+<div class="faqItem">
+
+<div class="question"
+onclick="toggleFAQ(this)">
+
+هل توجد باقات مجانية؟
+
+</div>
+
+<div class="answer">
+
+نعم، توجد محتويات وخدمات مجانية ومدفوعة.
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function toggleFAQ(el){
+
+const ans = el.nextElementSibling;
+
+ans.classList.toggle(
+
+"show"
+
+);
+
+}
+
+function sendMessage(){
+
+const name =
+
+document.getElementById(
+
+"name"
+
+).value.trim();
+
+const email =
+
+document.getElementById(
+
+"email"
+
+).value.trim();
+
+const message =
+
+document.getElementById(
+
+"message"
+
+).value.trim();
+
+if(
+
+!name ||
+
+!email ||
+
+!message
+
+){
+
+alert(
+
+"أكمل جميع الحقول"
+
+);
+
+return;
+
+}
+
+const text =
+
+`مرحباً ايفون نت
+
+الاسم: ${name}
+
+البريد: ${email}
+
+الاستفسار:
+${message}`;
+
+const whatsappURL =
+
+`https://wa.me/967771746373?text=${encodeURIComponent(text)}`;
+
+window.open(
+
+whatsappURL,
+
+"_blank"
+
+);
+
+}
+
+</script>
+
+</body>
+
+</html>

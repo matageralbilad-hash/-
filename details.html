@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>تفاصيل المحتوى | ايفون نت</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+margin:0;
+font-family:Cairo;
+background:linear-gradient(180deg,#07111f,#0d1728);
+color:white;
+padding-bottom:50px;
+}
+
+.container{
+width:95%;
+margin:auto;
+padding-top:20px;
+}
+
+.card{
+background:#0d1b2d;
+border-radius:20px;
+padding:20px;
+margin-top:20px;
+}
+
+img{
+width:100%;
+border-radius:18px;
+object-fit:cover;
+max-height:400px;
+}
+
+h1{
+font-size:26px;
+margin:15px 0;
+color:#18e0d0;
+}
+
+p{
+line-height:1.9;
+color:#b4bfd1;
+}
+
+.video{
+width:100%;
+margin-top:20px;
+border-radius:18px;
+overflow:hidden;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:20px;
+border:none;
+border-radius:14px;
+background:linear-gradient(135deg,#18e0d0,#4ca8ff);
+color:white;
+font-weight:bold;
+font-size:16px;
+}
+
+.lock{
+text-align:center;
+padding:30px;
+color:#ff4d4d;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div id="contentBox" class="card"></div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+
+const firebaseConfig = {
+apiKey: "AIzaSyAwe6GCjWD6JgoU2_CVsUL5Uonat3JRenk",
+authDomain: "ifon-net.firebaseapp.com",
+databaseURL: "https://ifon-net-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "ifon-net"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let USER_PLAN = "free";
+
+function getParam(name){
+const url = new URL(window.location.href);
+return url.searchParams.get(name);
+}
+
+let id = getParam("id");
+
+async function loadUser(){
+
+let uid = localStorage.getItem("ifon_uid");
+if(!uid) return;
+
+let snap = await db.ref("users/"+uid).once("value");
+let u = snap.val();
+
+if(u){
+USER_PLAN = u.plan || "free";
+}
+}
+
+async function loadContent(){
+
+let snap = await db.ref("content/"+id).once("value");
+let data = snap.val();
+
+if(!data){
+document.getElementById("contentBox").innerHTML = "غير موجود";
+return;
+}
+
+/* حماية الاشتراك */
+if(data.publish === "premium" && USER_PLAN === "free"){
+document.getElementById("contentBox").innerHTML = `
+<div class="lock">هذا المحتوى مخصص للمشتركين فقط</div>
+<button onclick="alert('قم بالترقية من الإدارة')">ترقية الحساب</button>
+`;
+return;
+}
+
+document.getElementById("contentBox").innerHTML = `
+
+<img src="${data.image}">
+
+<h1>${data.title}</h1>
+
+<p>${data.desc || "لا يوجد وصف"}</p>
+
+${
+data.video
+? `<div class="video">
+<video width="100%" controls src="${data.video}"></video>
+</div>`
+: ""
+}
+
+`;
+
+}
+
+(async function init(){
+await loadUser();
+await loadContent();
+})();
+
+</script>
+
+</body>
+</html>
