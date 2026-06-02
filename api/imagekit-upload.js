@@ -1,33 +1,63 @@
 import ImageKit from "imagekit";
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
 
-  try {
-    const imagekit = new ImageKit({
-      publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-      privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-      urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
-    });
+if(req.method !== "POST"){
+return res.status(405).json({
+error:"Method not allowed"
+});
+}
 
-    const { file, fileName } = req.body;
+try{
 
-    const result = await imagekit.upload({
-      file,
-      fileName: fileName || "ifon.jpg",
-      folder: "/ifon-net"
-    });
+const imagekit = new ImageKit({
 
-    return res.status(200).json({
-      url: result.url,
-      thumbnail: result.thumbnailUrl
-    });
+publicKey:
+process.env.IMAGEKIT_PUBLIC_KEY,
 
-  } catch (err) {
-    return res.status(500).json({
-      error: err.message
-    });
-  }
+privateKey:
+process.env.IMAGEKIT_PRIVATE_KEY,
+
+urlEndpoint:
+process.env.IMAGEKIT_URL_ENDPOINT
+
+});
+
+const { file, fileName } = req.body;
+
+if(!file){
+
+return res.status(400).json({
+error:"No image received"
+});
+
+}
+
+const result = await imagekit.upload({
+
+file:file,
+
+fileName:fileName || "ifon.jpg",
+
+folder:"/ifon-net"
+
+});
+
+return res.status(200).json({
+
+url:result.url,
+thumbnail:result.thumbnailUrl
+
+});
+
+}catch(err){
+
+return res.status(500).json({
+
+error:err.message
+
+});
+
+}
+
 }
