@@ -1,33 +1,39 @@
+export const config = {
+  api: {
+    bodyParser: false
+  }
+};
+
 export default async function handler(req, res) {
+  if (req.method !== "PUT") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
-if(req.method !== "POST"){
-return res.status(405).json({error:"Method not allowed"});
-}
+  try {
+    const { videoId } = req.query;
 
-try {
+    let chunks = [];
+    for await (const chunk of req) {
+      chunks.push(chunk);
+    }
 
-const { videoId } = req.body;
-const file = req.body.file;
+    const buffer = Buffer.concat(chunks);
 
-const response = await fetch(
-`https://video.bunnycdn.com/library/${process.env.BUNNY_LIBRARY_ID}/videos/${videoId}`,
-{
-method:"PUT",
-headers:{
-"AccessKey": process.env.BUNNY_API_KEY
-},
-body: file
-}
-);
+    await fetch(
+      `https://video.bunnycdn.com/library/${process.env.BUNNY_LIBRARY_ID}/videos/${videoId}`,
+      {
+        method: "PUT",
+        headers: {
+          AccessKey: process.env.BUNNY_API_KEY,
+          "Content-Type": "application/octet-stream"
+        },
+        body: buffer
+      }
+    );
 
-return res.status(200).json({
-success:true
-});
+    res.json({ success: true });
 
-} catch(err){
-return res.status(500).json({
-error: err.message
-});
-}
-
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 }

@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-
 if(req.method !== "POST"){
 return res.status(405).json({error:"Method not allowed"});
 }
@@ -16,16 +15,15 @@ headers:{
 "AccessKey": process.env.BUNNY_API_KEY,
 "Content-Type":"application/json"
 },
-body: JSON.stringify({
-title: title || "ifon video"
-})
+body: JSON.stringify({ title })
 }
 );
 
 const data = await response.json();
 
 return res.status(200).json({
-videoId: data.guid
+videoId: data.guid,
+libraryId: process.env.BUNNY_LIBRARY_ID
 });
 
 } catch(err){
@@ -33,5 +31,4 @@ return res.status(500).json({
 error: err.message
 });
 }
-
 }

@@ -234,30 +234,34 @@ reader.readAsDataURL(file);
 }
 /* VIDEO UPLOAD (FIXED FLOW) */
 async function uploadVideo(){
+
 const file = document.getElementById("videoFile").files[0];
 if(!file) return alert("اختر فيديو");
 
-/* create video */
+try{
+
 const create = await fetch("/api/bunny-upload", {
 method:"POST",
 headers:{ "Content-Type":"application/json" },
-body: JSON.stringify({ title: "ifon video" })
+body: JSON.stringify({ title: file.name })
 });
 
 const json = await create.json();
+
 const videoId = json.videoId;
+const libraryId = json.libraryId;
 
-/* upload file */
-await fetch(`/api/bunny-upload-file?videoId=${videoId}`, {
-method:"PUT",
-body: file
-});
-
-videoURL = `https://video.bunnycdn.com/play/${videoId}`;
+videoURL =
+`https://iframe.mediadelivery.net/embed/${libraryId}/${videoId}`;
 
 alert("تم رفع الفيديو");
+
+}catch(err){
+console.log(err);
+alert("فشل رفع الفيديو");
 }
 
+}
 /* PUBLISH CONTENT */
 async function publishContent(){
 

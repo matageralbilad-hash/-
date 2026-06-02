@@ -334,7 +334,7 @@ function renderSection(type,id){
 const el = document.getElementById(id);
 
 const items = CONTENT.filter(
-x => x.type===type && allowed(x)
+x => x.type===type
 );
 
 el.innerHTML = items.length ?
@@ -398,8 +398,6 @@ const items =
 CONTENT.filter(i =>
 
 i.type===type &&
-
-allowed(i) &&
 
 i.title?.toLowerCase()
 
