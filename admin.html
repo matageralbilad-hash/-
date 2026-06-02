@@ -191,24 +191,43 @@ alert("تم تحديث الاشتراك");
 
 /* IMAGE UPLOAD */
 async function uploadImage(){
-const file = document.getElementById("imageFile").files[0];
-if(!file) return alert("اختر صورة");
 
-const form = new FormData();
-form.append("file", file);
-form.append("fileName", file.name);
+const file =
+document.getElementById("imageFile").files[0];
 
-const res = await fetch("/api/imagekit-upload", {
+if(!file)
+return alert("اختر صورة");
+
+const reader = new FileReader();
+
+reader.onload = async function(){
+
+const res = await fetch(
+"/api/imagekit-upload",
+{
 method:"POST",
-body: form
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+
+file:reader.result,
+fileName:file.name
+
+})
 });
 
 const data = await res.json();
+
 imageURL = data.url;
 
 alert("تم رفع الصورة");
-}
 
+};
+
+reader.readAsDataURL(file);
+
+}
 /* VIDEO UPLOAD (FIXED FLOW) */
 async function uploadVideo(){
 const file = document.getElementById("videoFile").files[0];
