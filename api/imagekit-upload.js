@@ -11,50 +11,44 @@ error:"Method not allowed"
 try{
 
 const imagekit = new ImageKit({
-
-publicKey:
-process.env.IMAGEKIT_PUBLIC_KEY,
-
-privateKey:
-process.env.IMAGEKIT_PRIVATE_KEY,
-
-urlEndpoint:
-process.env.IMAGEKIT_URL_ENDPOINT
-
+publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
 });
 
 const { file, fileName } = req.body;
 
 if(!file){
-
 return res.status(400).json({
 error:"No image received"
 });
-
 }
 
 const result = await imagekit.upload({
 
-file:file,
+file: file,
 
-fileName:fileName || "ifon.jpg",
+fileName: fileName || "ifon.jpg",
 
-folder:"/ifon-net"
+folder: "/ifon-net"
 
 });
 
 return res.status(200).json({
 
-url:result.url,
-thumbnail:result.thumbnailUrl
+url: result.url,
+
+thumbnail: result.thumbnailUrl
 
 });
 
 }catch(err){
 
+console.log(err);
+
 return res.status(500).json({
 
-error:err.message
+error: err.message
 
 });
 
