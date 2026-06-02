@@ -130,10 +130,13 @@ cursor:pointer;
 
 <script>
 const firebaseConfig = {
-apiKey: "YOUR_API_KEY",
+apiKey: "AIzaSyAwe6GCjWD6JgoU2_CVsUL5Uonat3JRenk",
 authDomain: "ifon-net.firebaseapp.com",
 databaseURL: "https://ifon-net-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId: "ifon-net"
+projectId: "ifon-net",
+storageBucket: "ifon-net.appspot.com",
+messagingSenderId: "447913160966",
+appId: "1:447913160966:web:6bcece8ed143c1710e2e87"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -233,29 +236,51 @@ alert("تم رفع الفيديو");
 }
 
 /* PUBLISH CONTENT */
-function publishContent(){
+async function publishContent(){
 
-if(!title.value) return alert("اكتب العنوان");
+const titleValue =
+document.getElementById("title").value.trim();
+
+if(!titleValue)
+return alert("اكتب العنوان");
+
+if(!imageURL)
+return alert("ارفع صورة أولاً");
 
 const id = Date.now().toString();
 
-db.ref("content/"+id).set({
-id,
-type: type.value,
-title: title.value,
-desc: desc.value,
-image: imageURL,
-video: videoURL,
-publish: publish.value,
-createdAt: new Date().toISOString()
+await db.ref("content/"+id).set({
+
+id:id,
+
+type:
+document.getElementById("type").value,
+
+title:titleValue,
+
+desc:
+document.getElementById("desc").value,
+
+image:imageURL,
+
+video:videoURL || "",
+
+publish:
+document.getElementById("publish").value,
+
+createdAt:new Date().toISOString()
+
 });
 
 alert("تم النشر بنجاح");
 
-title.value = "";
-desc.value = "";
-imageURL = "";
-videoURL = "";
+document.getElementById("title").value="";
+document.getElementById("desc").value="";
+document.getElementById("imageFile").value="";
+document.getElementById("videoFile").value="";
+
+imageURL="";
+videoURL="";
 }
 </script>
 
