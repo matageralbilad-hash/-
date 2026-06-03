@@ -235,30 +235,71 @@ reader.readAsDataURL(file);
 /* VIDEO UPLOAD (FIXED FLOW) */
 async function uploadVideo(){
 
-const file = document.getElementById("videoFile").files[0];
-if(!file) return alert("اختر فيديو");
+const file =
+document.getElementById("videoFile").files[0];
+
+if(!file)
+return alert("اختر فيديو");
 
 try{
 
-const create = await fetch("/api/bunny-upload", {
+alert("جاري إنشاء الفيديو...");
+
+const create =
+await fetch("/api/bunny-upload",{
+
 method:"POST",
-headers:{ "Content-Type":"application/json" },
-body: JSON.stringify({ title: file.name })
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+title:file.name
+})
+
 });
 
-const json = await create.json();
+const json =
+await create.json();
 
-const videoId = json.videoId;
-const libraryId = json.libraryId;
+const videoId =
+json.videoId;
+
+const libraryId =
+json.libraryId;
+
+/* رفع الملف الحقيقي */
+const upload = await fetch(
+`/api/bunny-upload-file?videoId=${videoId}`,
+{
+method:"PUT",
+headers:{
+"Content-Type":"application/octet-stream"
+},
+body:file
+}
+);
+
+const result = await upload.json();
+
+if(!result.success){
+throw new Error("Upload failed");
+}
+
+/* رابط التضمين */
 
 videoURL =
 `https://iframe.mediadelivery.net/embed/${libraryId}/${videoId}`;
 
-alert("تم رفع الفيديو");
+alert("تم رفع الفيديو بنجاح");
 
 }catch(err){
+
 console.log(err);
+
 alert("فشل رفع الفيديو");
+
 }
 
 }
@@ -273,6 +314,10 @@ return alert("اكتب العنوان");
 
 if(!imageURL)
 return alert("ارفع صورة أولاً");
+
+if(!videoURL){
+return alert("ارفع الفيديو أولاً");
+}
 
 const id = Date.now().toString();
 
