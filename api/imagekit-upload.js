@@ -16,7 +16,7 @@ privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
 urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
 });
 
-const { file, fileName } = req.body;
+const { file, fileName, folder } = req.body;
 
 if(!file){
 return res.status(400).json({
@@ -30,7 +30,7 @@ file: file,
 
 fileName: fileName || "ifon.jpg",
 
-folder: "/ifon-net"
+folder: folder || "/ifon-net"
 
 });
 
