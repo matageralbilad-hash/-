@@ -1,105 +1,242 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تفاصيل المحتوى | ايفون نت</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&display=swap" rel="stylesheet">
+<title>ايفون نت | تفاصيل المحتوى</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-body{
+
+:root{
+--bg:#07111f;
+--card:#0d1b2d;
+--primary:#18e0d0;
+--secondary:#6b6cff;
+--muted:#9ca3af;
+}
+
+*{
 margin:0;
-font-family:Cairo;
-background:#07111f;
+padding:0;
+box-sizing:border-box;
+font-family:Cairo,sans-serif;
+}
+
+body{
+
+background:
+linear-gradient(
+180deg,
+#07111f,
+#0b1628,
+#101f35
+);
+
 color:white;
+
+padding-bottom:80px;
+
 }
 
 .container{
-padding:15px;
+
+width:95%;
+
+max-width:900px;
+
+margin:auto;
+
+padding-top:20px;
+
 }
 
-.videoBox{
-width:100%;
-aspect-ratio:16/9;
-border-radius:18px;
-overflow:hidden;
+/* VIDEO */
+
+.videoWrapper{
+
 background:#000;
-box-shadow:0 10px 30px rgba(0,0,0,0.5);
+
+border-radius:22px;
+
+overflow:hidden;
+
+box-shadow:0 10px 35px rgba(0,0,0,.5);
+
 }
 
-.videoBox iframe{
+.videoWrapper video{
+
 width:100%;
-height:100%;
-border:none;
+
+display:block;
+
+aspect-ratio:16/9;
+
+background:black;
+
 }
 
-.card{
-background:#0d1b2d;
-padding:15px;
-border-radius:16px;
-margin-top:15px;
+/* INFO */
+
+.contentCard{
+
+margin-top:18px;
+
+background:var(--card);
+
+padding:22px;
+
+border-radius:22px;
+
 }
 
 .title{
-font-size:22px;
+
+font-size:30px;
+
 font-weight:800;
-color:#18e0d0;
+
+margin-bottom:12px;
+
+line-height:1.4;
+
+}
+
+.meta{
+
+display:flex;
+
+gap:12px;
+
+flex-wrap:wrap;
+
+margin-bottom:18px;
+
+}
+
+.tag{
+
+background:#13243d;
+
+padding:8px 14px;
+
+border-radius:30px;
+
+font-size:13px;
+
+color:#d0d8e7;
+
 }
 
 .desc{
-color:#b4bfd1;
-margin-top:10px;
-line-height:1.8;
+
+line-height:2;
+
+color:var(--muted);
+
+font-size:15px;
+
 }
 
-.btn{
-margin-top:15px;
-padding:12px;
-border:none;
-border-radius:12px;
-width:100%;
-font-weight:bold;
-cursor:pointer;
-background:linear-gradient(135deg,#18e0d0,#6b6cff);
-color:white;
-}
+/* LOCK */
 
-.lock{
-position:relative;
-}
+.lockBox{
 
-.blur{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-backdrop-filter:blur(10px);
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-gap:10px;
-border-radius:18px;
+margin-top:20px;
+
+background:#122136;
+
+border-radius:20px;
+
+padding:25px;
+
+text-align:center;
+
 }
 
 .badge{
+
+display:inline-block;
+
+padding:10px 18px;
+
 background:#ffcc00;
-color:#000;
-padding:5px 10px;
-border-radius:8px;
-font-size:12px;
+
+color:black;
+
 font-weight:bold;
+
+border-radius:30px;
+
+margin-bottom:15px;
+
 }
+
+.btn{
+
+width:100%;
+
+padding:15px;
+
+margin-top:15px;
+
+border:none;
+
+border-radius:14px;
+
+font-weight:800;
+
+font-size:16px;
+
+cursor:pointer;
+
+color:white;
+
+background:
+
+linear-gradient(
+135deg,
+#18e0d0,
+#6b6cff
+);
+
+}
+
+/* SKELETON */
+
+.loading{
+
+padding:80px 0;
+
+text-align:center;
+
+color:#9ca3af;
+
+font-size:18px;
+
+}
+
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-<div id="content"></div>
+<div id="content">
+
+<div class="loading">
+
+جاري تحميل المحتوى...
+
+</div>
+
+</div>
 
 </div>
 
@@ -107,97 +244,253 @@ font-weight:bold;
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 <script>
+
 const firebaseConfig = {
-apiKey: "AIzaSyAwe6GCjWD6JgoU2_CVsUL5Uonat3JRenk",
-authDomain: "ifon-net.firebaseapp.com",
-databaseURL: "https://ifon-net-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId: "ifon-net"
+
+apiKey:"AIzaSyAwe6GCjWD6JgoU2_CVsUL5Uonat3JRenk",
+
+authDomain:"ifon-net.firebaseapp.com",
+
+databaseURL:"https://ifon-net-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:"ifon-net"
+
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const db = firebase.database();
 
-/* GET ID */
-const id = new URLSearchParams(location.search).get("id");
+const id =
+new URLSearchParams(
+location.search
+).get("id");
 
-/* USER */
-const uid = localStorage.getItem("ifon_uid");
+const uid =
+localStorage.getItem(
+"ifon_uid"
+);
 
-/* LOAD USER + CONTENT */
 async function load(){
 
-let userPlan = "free";
+let userPlan="free";
 
-/* user plan */
 if(uid){
-const usnap = await db.ref("users/"+uid).once("value");
-const user = usnap.val();
-if(user) userPlan = user.plan || "free";
+
+const u =
+await db.ref(
+"users/"+uid
+).once("value");
+
+const user =
+u.val();
+
+if(user){
+
+userPlan =
+user.plan || "free";
+
 }
 
-/* content */
-db.ref("content/"+id).once("value", snap=>{
-const data = snap.val();
-console.log(data.video);
+}
+
+const snap =
+await db.ref(
+"content/"+id
+).once("value");
+
+const data =
+snap.val();
 
 if(!data){
-document.getElementById("content").innerHTML = "لا يوجد محتوى";
+
+document.getElementById(
+"content"
+).innerHTML = "المحتوى غير موجود";
+
 return;
+
 }
 
-/* views +1 */
-db.ref("content/"+id+"/views").transaction(v => (v||0)+1);
+/* زيادة المشاهدات */
 
-/* premium lock */
-let locked = false;
+db.ref(
+"content/"+id+"/views"
+).transaction(
+v => (v||0)+1
+);
 
-if(data.publish === "premium" && userPlan !== "premium"){
-locked = true;
+const locked =
+
+data.publish==="premium"
+
+&&
+
+userPlan!=="premium";
+
+document.getElementById(
+"content"
+).innerHTML = `
+
+<div class="videoWrapper">
+
+${
+locked ?
+
+`
+<div style="
+height:300px;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#000;
+font-size:22px;
+">
+🔒 محتوى مدفوع
+</div>
+`
+
+:
+
+`
+
+<video
+
+controls
+
+controlsList="nodownload"
+
+playsinline
+
+preload="metadata"
+
+poster="${data.image || ''}"
+
+>
+
+<source
+
+src="${data.video || ''}"
+
+type="video/mp4"
+
+>
+
+</video>
+
+`
+
 }
 
-/* render */
-document.getElementById("content").innerHTML = `
-
-<div class="videoBox">
-<iframe src="${data.video || ''}" allowfullscreen></iframe>
 </div>
 
-<div class="card">
-<div class="title">${data.title || ""}</div>
-<div class="desc">${data.desc || ""}</div>
+<div class="contentCard">
 
-<div style="margin-top:10px;color:#9ca3af;font-size:13px">
-👁 المشاهدات: ${data.views || 0}
+<div class="title">
+
+${data.title || ""}
+
 </div>
+
+<div class="meta">
+
+<div class="tag">
+
+👁 ${data.views || 0} مشاهدة
+
+</div>
+
+<div class="tag">
+
+📂 ${data.type || "-"}
+
+</div>
+
+<div class="tag">
+
+📅 ${
+new Date(
+data.createdAt
+).toLocaleDateString(
+"ar"
+)
+
+}
+
+</div>
+
+</div>
+
+<div class="desc">
+
+${data.desc || "لا يوجد وصف"}
+
 </div>
 
 ${
-locked ? `
-<div class="card lock">
-<div class="blur">
-<div class="badge">محتوى مدفوع</div>
-<button class="btn" onclick="openWhatsApp()">
-اشترك الآن عبر واتساب
+
+locked ?
+
+`
+
+<div class="lockBox">
+
+<div class="badge">
+
+اشتراك مدفوع
+
+</div>
+
+<p>
+
+هذا المحتوى متاح للمشتركين فقط
+
+</p>
+
+<button
+
+class="btn"
+
+onclick="subscribe()"
+
+>
+
+اشترك الآن
+
 </button>
+
 </div>
-</div>
-` : ""
+
+`
+
+:
+
+""
+
 }
+
+</div>
 
 `;
 
-});
 }
 
-function openWhatsApp(){
+function subscribe(){
+
 window.open(
-"https://wa.me/967771746373?text=اريد%20اشتراك%20ايفون%20نت",
+
+"https://wa.me/967771746373?text=اريد اشتراك ايفون نت",
+
 "_blank"
+
 );
+
 }
 
 load();
+
 </script>
 
 </body>
+
 </html>
