@@ -236,63 +236,64 @@ reader.readAsDataURL(file);
 async function uploadVideo(){
 
 const file =
-document.getElementById("videoFile").files[0];
+document.getElementById(
+"videoFile"
+).files[0];
 
 if(!file){
 alert("اختر فيديو");
 return;
 }
 
+const reader =
+new FileReader();
+
+reader.onload = async function(){
+
 try{
 
 alert("جاري رفع الفيديو...");
 
-const create = await fetch(
-"/api/bunny-upload",
+const res =
+await fetch(
+"/api/imagekit-upload",
 {
 method:"POST",
+
 headers:{
 "Content-Type":"application/json"
 },
+
 body:JSON.stringify({
-title:file.name
+
+file:reader.result,
+
+fileName:file.name,
+
+folder:"/ifon-videos"
+
 })
+
 }
 );
 
-const data = await create.json();
+const data =
+await res.json();
 
-if(!data.videoId){
-throw new Error("لم يتم إنشاء الفيديو");
-}
+if(!data.url){
 
-const uploadResponse =
-await fetch(
-
-`/api/bunny-upload-file?videoId=${data.videoId}`,
-
-{
-method:"PUT",
-body:file
-}
-
+throw new Error(
+"فشل رفع الفيديو"
 );
 
-const uploadData =
-await uploadResponse.json();
-
-if(!uploadData.success){
-throw new Error("فشل رفع الملف");
 }
-
-/* رابط الفيديو */
 
 videoURL =
-`https://iframe.mediadelivery.net/embed/${data.libraryId}/${data.videoId}`;
+data.url;
 
 console.log(videoURL);
 
-alert("تم رفع الفيديو");
+alert("تم رفع الفيديو بنجاح");
 
 }catch(err){
 
@@ -301,6 +302,10 @@ console.log(err);
 alert(err.message);
 
 }
+
+};
+
+reader.readAsDataURL(file);
 
 }
 /* PUBLISH CONTENT */
