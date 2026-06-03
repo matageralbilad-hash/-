@@ -238,67 +238,67 @@ async function uploadVideo(){
 const file =
 document.getElementById("videoFile").files[0];
 
-if(!file)
-return alert("اختر فيديو");
+if(!file){
+alert("اختر فيديو");
+return;
+}
 
 try{
 
-alert("جاري إنشاء الفيديو...");
+alert("جاري رفع الفيديو...");
 
-const create =
-await fetch("/api/bunny-upload",{
-
+const create = await fetch(
+"/api/bunny-upload",
+{
 method:"POST",
-
 headers:{
 "Content-Type":"application/json"
 },
-
 body:JSON.stringify({
 title:file.name
 })
-
-});
-
-const json =
-await create.json();
-
-const videoId =
-json.videoId;
-
-const libraryId =
-json.libraryId;
-
-/* رفع الملف الحقيقي */
-const upload = await fetch(
-`/api/bunny-upload-file?videoId=${videoId}`,
-{
-method:"PUT",
-headers:{
-"Content-Type":"application/octet-stream"
-},
-body:file
 }
 );
 
-const result = await upload.json();
+const data = await create.json();
 
-if(!result.success){
-throw new Error("Upload failed");
+if(!data.videoId){
+throw new Error("لم يتم إنشاء الفيديو");
 }
 
-/* رابط التضمين */
+const uploadResponse =
+await fetch(
+
+`/api/bunny-upload-file?videoId=${data.videoId}`,
+
+{
+method:"PUT",
+body:file
+}
+
+);
+
+const uploadData =
+await uploadResponse.json();
+
+if(!uploadData.success){
+throw new Error("فشل رفع الملف");
+}
+
+/* رابط الفيديو */
 
 videoURL =
-`https://iframe.mediadelivery.net/embed/${libraryId}/${videoId}`;
+`https://iframe.mediadelivery.net/embed/${data.libraryId}/${data.videoId}`;
 
-alert("تم رفع الفيديو بنجاح");
+console.log(videoURL);
+
+alert("تم رفع الفيديو");
 
 }catch(err){
 
 console.log(err);
 
-alert("فشل رفع الفيديو");
+alert(err.message);
 
 }
 
@@ -323,22 +323,21 @@ const id = Date.now().toString();
 
 await db.ref("content/"+id).set({
 
-id:id,
-
-type:
-document.getElementById("type").value,
+id,
 
 title:titleValue,
 
-desc:
-document.getElementById("desc").value,
+type:document.getElementById("type").value,
+
+desc:document.getElementById("desc").value,
 
 image:imageURL,
 
-video:videoURL || "",
+video:videoURL,
 
-publish:
-document.getElementById("publish").value,
+publish:document.getElementById("publish").value,
+
+views:0,
 
 createdAt:new Date().toISOString()
 
