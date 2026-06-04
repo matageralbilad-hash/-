@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>ايفون نت | الباقات</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--bg:#07111f;
+--card:#0d1b2d;
+--primary:#18e0d0;
+--secondary:#4ca8ff;
+--muted:#b4bfd1;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Cairo,sans-serif;
+}
+
+body{
+background:linear-gradient(180deg,#07111f,#0d1728);
+color:white;
+padding-bottom:120px;
+}
+
+.header{
+padding:20px;
+position:sticky;
+top:0;
+background:#07111f;
+z-index:999;
+}
+
+.navbar{
+display:flex;
+justify-content:center;
+gap:40px;
+margin-bottom:15px;
+}
+
+.navbar a{
+text-decoration:none;
+color:white;
+font-size:18px;
+font-weight:800;
+}
+
+.title{
+text-align:center;
+font-size:34px;
+font-weight:800;
+margin-top:20px;
+}
+
+.subtitle{
+text-align:center;
+color:var(--muted);
+margin-top:10px;
+padding:0 20px;
+line-height:1.8;
+}
+
+.plansContainer{
+width:94%;
+margin:30px auto;
+display:flex;
+flex-direction:column;
+gap:20px;
+}
+
+.planCard{
+background:var(--card);
+padding:25px;
+border-radius:24px;
+border:1px solid rgba(255,255,255,.05);
+}
+
+.planName{
+font-size:26px;
+font-weight:800;
+color:var(--primary);
+margin-bottom:10px;
+}
+
+.planPrice{
+font-size:22px;
+font-weight:700;
+margin-bottom:20px;
+}
+
+.features{
+color:var(--muted);
+line-height:2;
+}
+
+.btn{
+margin-top:20px;
+width:100%;
+padding:15px;
+border:none;
+border-radius:16px;
+font-weight:800;
+cursor:pointer;
+background:linear-gradient(135deg,#18e0d0,#4ca8ff);
+color:white;
+font-size:16px;
+}
+
+.empty{
+text-align:center;
+padding:60px 20px;
+color:#8fa3bc;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="navbar">
+
+<a href="home.html">
+الرئيسية
+</a>
+
+<a href="plans.html">
+الباقات
+</a>
+
+<a href="contact.html">
+اتصل بنا
+</a>
+
+</div>
+
+</header>
+
+<h1 class="title">
+باقات ايفون نت
+</h1>
+
+<p class="subtitle">
+اختر الباقة المناسبة لك واستمتع بسرعة وثبات وخدمات متنوعة
+</p>
+
+<div class="plansContainer" id="plansContainer">
+
+<div class="empty">
+سيتم إضافة الباقات هنا
+</div>
+
+</div>
+
+<script>
+
+function orderPlan(plan){
+
+window.open(
+
+`https://wa.me/967771746373?text=${encodeURIComponent(
+"أريد الاشتراك في باقة " + plan
+)}`,
+
+"_blank"
+
+);
+
+}
+
+</script>
+
+</body>
+
+</html>
